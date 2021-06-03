@@ -13,8 +13,23 @@ function App() {
   const weekDay = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const getdata = async () => {
     var api = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=3869896b60d51401b389e3830552ef2f`
-    const data = await fetch(api);
-    const jsonData = await data.json();
+    const data = await fetch(api).then(res => {
+      if (res.status >= 400) {
+        alert('please write city name properly')
+        setCity('Pune');
+        return 'err';
+      } else {
+        return res;
+      }
+    });
+    var jsonData
+    if(data === 'err'){
+      getdata();
+    }
+    else{
+
+    }
+    jsonData = await data.json();
     setData({
       cityName: city,
       country: jsonData.sys.country,
@@ -26,8 +41,8 @@ function App() {
       tempF: jsonData.main.temp.toFixed(0) - 126,
       tempC: ((jsonData.main.temp - 32) * 5 / 9).toFixed(0) - 126,
       pressure: jsonData.main.pressure,
-      minTemp: jsonData.main.temp_min.toFixed(0) -126,
-      maxTemp: jsonData.main.temp_max.toFixed(0) -126,
+      minTemp: jsonData.main.temp_min.toFixed(0) - 126,
+      maxTemp: jsonData.main.temp_max.toFixed(0) - 126,
       latitude: jsonData.coord.lat,
       longitude: jsonData.coord.lon
     });
@@ -49,7 +64,7 @@ function App() {
   useEffect(() => {
     getdata();
     getTime();
-  }, [city])
+  }, [])
   return (
     <div className="App">
       <div id="container">
@@ -58,13 +73,13 @@ function App() {
 
 
         <div className='allWeather'>
-          <div className = 'tempAndIcon'>
+          <div className='tempAndIcon'>
             <p className='cityCountry'>{`${data.cityName},${data.country}`}</p>
             <p className='cloudDesc'>{data.weatherDescription}</p>
             <div className='temp'>
               <img src={cloud} height='70' alt='' />
               <div className='tempF'>
-                <p className = 'tempSizeC'>{data.tempC}</p>
+                <p className='tempSizeC'>{data.tempC}</p>
                 <img className='celImg' src={cel} height='70' alt={`\u00b0 C`} />
               </div>
               <div className='tempF'>
@@ -75,22 +90,22 @@ function App() {
             </div>
           </div>
           <div>
-            <p className = 'day'>{`${weekDay[new Date().getDay()]}, ${currentTime}`}</p>
+            <p className='day'>{`${weekDay[new Date().getDay()]}, ${currentTime}`}</p>
           </div>
         </div>
 
-        <div className = 'allOtherDataGrid'>
-          <p className = 'otherData'>{`Latitude : ${data.latitude}`}</p>
-          <p className = 'otherData'>{`Longitude : ${data.longitude}`}</p>
-        
-          <p className = 'otherData'>{`Wind Speed : ${data.windSpeed}`}</p>
-          <p className = 'otherData'>{`Wind Direction : ${data.windDirection}`}</p>
-       
-          <p className = 'otherData'>{`Humidity : ${data.humidity}`}</p>
-          <p className = 'otherData'>{`Pressure : ${data.pressure}`}</p>
-        
-          <p className = 'otherData'>{`Minimum Temp : ${data.minTemp}`}</p>
-          <p className = 'otherData'>{`Maximum Temp : ${data.maxTemp}`}</p>
+        <div className='allOtherDataGrid'>
+          <p className='otherData'>{`Latitude : ${data.latitude}`}</p>
+          <p className='otherData'>{`Longitude : ${data.longitude}`}</p>
+
+          <p className='otherData'>{`Wind Speed : ${data.windSpeed}`}</p>
+          <p className='otherData'>{`Wind Direction : ${data.windDirection}`}</p>
+
+          <p className='otherData'>{`Humidity : ${data.humidity}`}</p>
+          <p className='otherData'>{`Pressure : ${data.pressure}`}</p>
+
+          <p className='otherData'>{`Minimum Temp : ${data.minTemp}`}</p>
+          <p className='otherData'>{`Maximum Temp : ${data.maxTemp}`}</p>
         </div>
       </div>
     </div>
